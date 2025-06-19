@@ -1,0 +1,12 @@
+.chart_container {
+    height: 320px; 
+    width: 100%;
+    color: white;
+}
+
+.chart_container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #f1f1f1;
+} 

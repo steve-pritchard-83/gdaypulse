@@ -1,0 +1,152 @@
+.main {
+  padding: 2rem 4rem;
+  max-width: 90rem;
+  margin: auto;
+  min-height: 100vh;
+  color: white;
+  background-color: #050a19;
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.header h1 {
+  font-size: 2.75rem;
+  font-weight: 700;
+}
+
+.header p {
+  color: #c5cde0;
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+
+.loading {
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 4rem;
+  font-weight: 300;
+}
+
+.grid_container {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.dora_metrics {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.okr_section {
+  grid-template-columns: repeat(3, 1fr);
+  align-items: stretch;
+}
+
+.card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s ease;
+}
+
+.stat_card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat_card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.stat_card p:first-child {
+  color: #c5cde0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.stat_card p:last-child {
+  font-size: 2.75rem;
+  font-weight: 700;
+}
+
+.stat_card .unit {
+  font-size: 1.25rem;
+  margin-left: 0.5rem;
+  font-weight: 300;
+  color: #c5cde0;
+}
+
+.chart_card {
+  min-height: 400px;
+}
+
+.okr_card {
+  display: flex;
+  flex-direction: column;
+}
+
+.okr_card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.okr_card ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.okr_card li {
+    font-size: 1.1rem;
+    color: #c5cde0;
+    margin-bottom: 0.5rem;
+}
+
+.gauge_container {
+  grid-column: span 2 / span 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main {
+    padding: 2rem;
+  }
+  .dora_metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 1.5rem;
+  }
+  .dora_metrics, .okr_section {
+    grid-template-columns: 1fr;
+  }
+  .gauge_container {
+    grid-column: auto;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+} 
