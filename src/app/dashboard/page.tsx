@@ -5,28 +5,56 @@ import OKRGauge from '@/components/OKRGauge';
 import Logo from '@/components/Logo';
 import styles from './Dashboard.module.css';
 
-export default function DashboardPage() {
-  const [metrics, setMetrics] = useState<any>(null);
+interface Deployment {
+  date: string;
+  count: number;
+}
+
+interface Metrics {
+  deploymentFrequency: Deployment[];
+  averageLeadTimeHours: string;
+  changeFailureRatePercent: string;
+  averageRestoreTimeHours: string;
+  submissions: number;
+}
+
+const DashboardPage = () => {
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // This is a simplified fetch, add error handling for production
-    Promise.all([
-      fetch('/api/contact-submissions').then((res) => res.json()),
-      fetch('/api/github/deployments').then((res) => res.json()),
-      fetch('/api/github/leadtime').then((res) => res.json()),
-      fetch('/api/github/failure-rate').then((res) => res.json()),
-      fetch('/api/github/restore-time').then((res) => res.json()),
-    ]).then(([okr, deploys, lead, fail, restore]) => {
-      if (okr && deploys && lead && fail && restore) {
-        setMetrics({
-          okr,
-          deploymentCount: deploys.length,
-          averageLeadTimeHours: lead.averageLeadTimeHours,
-          changeFailureRatePercent: fail.changeFailureRatePercent,
-          averageRestoreTimeHours: restore.averageRestoreTimeHours,
-        });
+    const fetchMetrics = async () => {
+      try {
+        const res = await Promise.all([
+          fetch('/api/github/deployments'),
+          fetch('/api/github/lead-time'),
+          fetch('/api/github/failure-rate'),
+          fetch('/api/github/restore-time'),
+          fetch('/api/contact-submissions'),
+        ]);
+
+        const data = await Promise.all(res.map((r) => r.json()));
+
+        if (res.some((r) => !r.ok)) {
+          const errorMessages = data.map(d => d.message).join(', ');
+          throw new Error(`Failed to fetch: ${errorMessages}`);
+        }
+
+        const combinedMetrics = data.reduce(
+          (acc, current) => ({ ...acc, ...current }),
+          {}
+        ) as Metrics;
+
+        setMetrics(combinedMetrics);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'An unknown error occurred');
+      } finally {
+        setLoading(false);
       }
-    }).catch(console.error);
+    };
+
+    fetchMetrics();
   }, []);
 
   const deploymentChartData = Array.from({ length: 7 }, (_, i) => ({
@@ -39,19 +67,20 @@ export default function DashboardPage() {
       <header className={styles.header}>
         <Logo />
         <div>
-          <h1>G'dayPulse</h1>
+          <h1>G&apos;dayPulse</h1>
           <p>DORA & OKR Dashboard for futrcrew.com</p>
         </div>
       </header>
 
-      {!metrics && <p className={styles.loading}>Loading metrics...</p>}
+      {loading && <p className={styles.loading}>Loading metrics...</p>}
+      {error && <p className={styles.error}>Error: {error}</p>}
 
       {metrics && (
         <div className={styles.grid_container}>
           <section className={`${styles.grid_container} ${styles.dora_metrics}`}>
             <div className={`${styles.card} ${styles.stat_card}`}>
               <p>Deployments This Week</p>
-              <p>{metrics.deploymentCount}</p>
+              <p>{metrics.deploymentFrequency.length}</p>
             </div>
             <div className={`${styles.card} ${styles.stat_card}`}>
               <p>Avg Lead Time</p>
@@ -68,24 +97,28 @@ export default function DashboardPage() {
           </section>
 
           <section className={`${styles.card} ${styles.chart_card}`}>
-            <DeploymentsChart data={deploymentChartData} />
+            <DeploymentsChart data={metrics.deploymentFrequency} />
           </section>
 
           <section className={`${styles.grid_container} ${styles.okr_section}`}>
             <div className={`${styles.card} ${styles.okr_card}`}>
               <h2>OKR: Contact Form</h2>
               <ul>
-                <li><strong>Baseline:</strong> {metrics.okr.baseline ?? 'Not set'}</li>
-                <li><strong>Current:</strong> {metrics.okr.submissionCount}</li>
-                <li><strong>Target:</strong> {metrics.okr.target ?? 'N/A'}</li>
+                <li><strong>Baseline:</strong> {metrics.submissions}</li>
+                <li><strong>Current:</strong> {metrics.submissions}</li>
+                <li><strong>Target:</strong> {1000}</li>
               </ul>
             </div>
             <div className={`${styles.card} ${styles.gauge_container}`}>
-              <OKRGauge progress={metrics.okr.progress} />
+              <OKRGauge
+                progress={(metrics.submissions / 1000) * 100}
+              />
             </div>
           </section>
         </div>
       )}
     </main>
   );
-} 
+};
+
+export default DashboardPage; 

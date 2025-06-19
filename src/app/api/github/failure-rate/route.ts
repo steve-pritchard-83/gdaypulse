@@ -1,12 +1,20 @@
 import { NextResponse } from 'next/server';
 import { fetchPullRequests } from '@/lib/github';
 
+interface GitHubLabel {
+  name: string;
+}
+
+interface GitHubPullRequest {
+  labels: GitHubLabel[];
+}
+
 export async function GET() {
   try {
-    const prs = await fetchPullRequests('closed', 50);
+    const prs: GitHubPullRequest[] = await fetchPullRequests('closed', 50);
 
-    const bugFixes = prs.filter((pr: any) =>
-      pr.labels?.some((label: any) =>
+    const bugFixes = prs.filter((pr) =>
+      pr.labels?.some((label) =>
         label.name.toLowerCase().includes('bug')
       )
     ).length;
@@ -16,6 +24,7 @@ export async function GET() {
 
     return NextResponse.json({ changeFailureRatePercent: rate });
   } catch (error) {
-    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json({ message }, { status: 500 });
   }
 } 

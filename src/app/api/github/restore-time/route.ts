@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import { fetchIssues } from '@/lib/github';
 
+interface GitHubIssue {
+  created_at: string;
+  closed_at: string | null;
+}
+
 export async function GET() {
   try {
-    const issues = await fetchIssues('closed', 'bug', 20);
+    const issues: GitHubIssue[] = await fetchIssues('closed', 'bug', 20);
 
-    const restoreTimes = issues.map((issue: any) => {
+    const restoreTimes = issues.map((issue) => {
       const opened = new Date(issue.created_at).getTime();
-      const closed = new Date(issue.closed_at).getTime();
+      const closed = new Date(issue.closed_at as string).getTime();
       return (closed - opened) / 1000 / 60 / 60; // hours
     });
 
@@ -20,6 +25,7 @@ export async function GET() {
 
     return NextResponse.json({ averageRestoreTimeHours: avg });
   } catch (error) {
-    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json({ message }, { status: 500 });
   }
 } 
