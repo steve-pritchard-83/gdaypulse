@@ -82,7 +82,7 @@ export default function Dashboard() {
           leadTime: leadTimeData,
           changeFailureRate: failureRateData,
           timeToRestore: restoreTimeData,
-          okr: okrData,
+          okr: okrData.okr,
           commits: commitsData.commits,
           deployments: deploymentHistoryData.deployments,
           weeklyCommitCount: weeklyCommitsData.weeklyCommitCount
