@@ -6,6 +6,8 @@ import Logo from '@/components/Logo';
 import styles from './Dashboard.module.css';
 import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
+import OKRChart from '@/components/OKRChart';
+import SubmissionsChart from '@/components/SubmissionsChart';
 
 interface Commit {
   sha: string;
@@ -28,7 +30,13 @@ interface Metrics {
   leadTime: { average: number };
   changeFailureRate: { rate: number };
   timeToRestore: { average: number };
-  okr: { baseline: number; target: number; current: number; progress: number };
+  okr: {
+    baseline: number;
+    target: number;
+    current: number;
+    progress: number;
+    chartData: { date: string; count: number }[];
+  };
   commits: Commit[];
   deployments: Deployment[];
   weeklyCommitCount: number;
@@ -105,9 +113,13 @@ export default function Dashboard() {
     return (
         <div className={styles.dashboard}>
             <header className={styles.header}>
-                <Logo />
-                <h1 className={styles.title}>G&apos;dayPulse</h1>
-                <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
+                <div>
+                    <Logo className={styles.logo}/>
+                </div>
+                <div>
+                    <h1 className={styles.title}>G&apos;dayPulse</h1>
+                    <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
+                </div>
             </header>
             <div className={styles.loading}>Loading Dashboard...</div>
         </div>
@@ -128,9 +140,13 @@ export default function Dashboard() {
   return (
     <div className={styles.dashboard}>
       <header className={styles.header}>
-        <Logo />
-        <h1 className={styles.title}>G&apos;dayPulse</h1>
-        <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
+        <div>
+            <Logo className={styles.logo}/>
+        </div>
+        <div>
+            <h1 className={styles.title}>G&apos;dayPulse</h1>
+            <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
+        </div>
       </header>
 
       <div className={styles.mainGrid}>
@@ -162,18 +178,12 @@ export default function Dashboard() {
         </div>
 
         <div className={styles.okrCard}>
-            <h2 className={styles.cardTitle}>Objective: Boost Engagement</h2>
-            {okr && (
-                <ul>
-                    <li>Baseline Submissions (Last Month): <span>{okr.baseline}</span></li>
-                    <li>Target Submissions (This Month): <span>{okr.target}</span></li>
-                    <li>Current Submissions (This Month): <span>{okr.current}</span></li>
-                </ul>
-            )}
+            <h2 className={styles.cardTitle}>Objective: Boost Enquiries 10% this Month</h2>
+            {okr && <OKRChart data={okr} />}
         </div>
 
         <div className={styles.okrGaugeCard}>
-             <OKRGauge value={okr?.progress ?? 0} />
+             <SubmissionsChart data={okr.chartData} />
         </div>
 
         <div className={`${styles.card} ${styles.historyCard}`}>

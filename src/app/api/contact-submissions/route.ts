@@ -21,7 +21,33 @@ export async function GET() {
     // Calculate target
     const target = Math.ceil(baseline * 1.1);
     
-    return NextResponse.json({ okr: { baseline, current, target, progress: target > 0 ? (current / target) * 100 : 0 } }, {
+    // Get all submissions from the last 30 days for the chart
+    const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30).getTime();
+    const allSubmissions: string[] = await kv.zrange('submissions_log', thirtyDaysAgo, endOfCurrentMonth, { byScore: true });
+    
+    // Group submissions by day
+    const submissionsByDay = allSubmissions.reduce((acc: Record<string, number>, member) => {
+        const timestamp = parseInt(member.split(':')[1]);
+        const date = new Date(timestamp).toISOString().split('T')[0];
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Format for chart
+    const chartData = Object.keys(submissionsByDay).map(date => ({
+        date,
+        count: submissionsByDay[date],
+    })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    return NextResponse.json({
+        okr: {
+            baseline,
+            current,
+            target,
+            progress: target > 0 ? (current / target) * 100 : 0,
+            chartData: chartData,
+        }
+    }, {
       headers: {
         'Access-Control-Allow-Origin': '*',
       }

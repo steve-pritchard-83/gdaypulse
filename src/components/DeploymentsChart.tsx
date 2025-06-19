@@ -15,16 +15,17 @@ interface DeploymentsChartProps {
 
 const DeploymentsChart = ({ data }: DeploymentsChartProps) => {
   return (
-    <div>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <h2 style={{
         fontSize: '0.9rem',
         fontWeight: 500,
         margin: '0 0 1rem 0',
         color: '#a0a0a0',
         textTransform: 'uppercase',
-        letterSpacing: '0.5px'
+        letterSpacing: '0.5px',
+        flexShrink: 0,
       }}>Deployments Over Time</h2>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" strokeOpacity={0.6} />
           <XAxis dataKey="date" stroke="#a0a0a0" fontSize={12} />

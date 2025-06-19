@@ -4,13 +4,29 @@
 }
 
 .header {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
   margin-bottom: 2rem;
-  background: transparent;
-  padding: 1rem 0;
+  padding: 0;
+}
+
+.header > div:first-child {
+    position: absolute;
+    left: 0;
+    height: 89.25%;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 100%;
+    width: auto;
 }
 
 .title {
+  text-align: center;
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--gday-white);
@@ -18,6 +34,7 @@
 }
 
 .subtitle {
+  text-align: center;
   font-size: 1.1rem;
   font-weight: 400;
   color: #a0a0a0;
@@ -49,6 +66,8 @@
 
 .doraChartCard {
   grid-column: span 3;
+  display: flex;
+  flex-direction: column;
 }
 
 .card, .historyCard, .okrCard, .okrGaugeCard {
