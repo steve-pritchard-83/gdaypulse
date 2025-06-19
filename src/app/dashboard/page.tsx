@@ -22,6 +22,9 @@ export default function Dashboard() {
           leadTimeRes,
           failureRateRes,
           restoreTimeRes,
+          prSizeRes,
+          reviewTimeRes,
+          churnRes,
           okrRes,
           commitsRes,
           deploymentHistoryRes,
@@ -31,13 +34,16 @@ export default function Dashboard() {
           fetch('/api/github/leadtime'),
           fetch('/api/github/failure-rate'),
           fetch('/api/github/restore-time'),
+          fetch('/api/github/pr-size'),
+          fetch('/api/github/review-time'),
+          fetch('/api/github/code-churn'),
           fetch('/api/contact-submissions'),
           fetch('/api/github/commits'),
           fetch('/api/github/deployment-history'),
           fetch('/api/github/weekly-commits')
         ]);
 
-        if (!deploymentsRes.ok || !leadTimeRes.ok || !failureRateRes.ok || !restoreTimeRes.ok || !okrRes.ok || !commitsRes.ok || !deploymentHistoryRes.ok || !weeklyCommitsRes.ok) {
+        if (!deploymentsRes.ok || !leadTimeRes.ok || !failureRateRes.ok || !restoreTimeRes.ok || !prSizeRes.ok || !reviewTimeRes.ok || !churnRes.ok || !okrRes.ok || !commitsRes.ok || !deploymentHistoryRes.ok || !weeklyCommitsRes.ok) {
           throw new Error('Failed to fetch one or more metrics');
         }
 
@@ -45,6 +51,9 @@ export default function Dashboard() {
         const leadTimeData = await leadTimeRes.json();
         const failureRateData = await failureRateRes.json();
         const restoreTimeData = await restoreTimeRes.json();
+        const prSizeData = await prSizeRes.json();
+        const reviewTimeData = await reviewTimeRes.json();
+        const churnData = await churnRes.json();
         const okrData = await okrRes.json();
         const commitsData = await commitsRes.json();
         const deploymentHistoryData = await deploymentHistoryRes.json();
@@ -57,6 +66,9 @@ export default function Dashboard() {
           leadTime: leadTimeData,
           changeFailureRate: failureRateData,
           timeToRestore: restoreTimeData,
+          averagePrSize: prSizeData,
+          timeToFirstReview: reviewTimeData,
+          codeChurn: churnData,
           okr: okrData.okr,
           commits: commitsData.commits,
           deployments: deploymentHistoryData.deployments,
@@ -101,7 +113,7 @@ export default function Dashboard() {
     return <div className={styles.error}>No metrics data available.</div>;
   }
 
-  const { deploymentFrequency, leadTime, changeFailureRate, timeToRestore, okr, commits, deployments, weeklyCommitCount } = metrics;
+  const { deploymentFrequency, leadTime, changeFailureRate, timeToRestore, averagePrSize, timeToFirstReview, codeChurn, okr, commits, deployments, weeklyCommitCount } = metrics;
   const weeklyDeployments = deploymentFrequency.chartData.slice(-7).reduce((acc: number, d: { count: number; }) => acc + d.count, 0);
 
   return (
@@ -125,6 +137,18 @@ export default function Dashboard() {
           <div className={styles.card}>
             <h2 className={styles.cardTitle}>Commits This Week</h2>
             <p className={styles.metric}>{weeklyCommitCount}</p>
+          </div>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Avg PR Size</h2>
+            <p className={styles.metric}>{averagePrSize.average.toFixed(0)} <span className={styles.unit}>lines</span></p>
+          </div>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Time to First Review</h2>
+            <p className={styles.metric}>{timeToFirstReview.average.toFixed(0)} <span className={styles.unit}>hrs</span></p>
+          </div>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Code Churn</h2>
+            <p className={styles.metric}>{codeChurn.rate.toFixed(0)}<span className={styles.unit}>%</span></p>
           </div>
           <div className={styles.card}>
             <h2 className={styles.cardTitle}>Avg Lead Time</h2>

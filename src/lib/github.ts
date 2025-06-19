@@ -3,6 +3,8 @@ import { components } from '@octokit/openapi-types';
 type Deployment = components["schemas"]["deployment"];
 type Commit = components["schemas"]["commit"];
 type PullRequest = components["schemas"]["pull-request"];
+type PullRequestDetails = components["schemas"]["pull-request"];
+type Review = components["schemas"]["pull-request-review"];
 type Issue = components["schemas"]["issue"];
 
 async function fetchFromGitHub(endpoint: string) {
@@ -32,6 +34,14 @@ export async function fetchCommits(limit = 100): Promise<Commit[]> {
 
 export async function fetchPullRequests(state = 'closed', limit = 100): Promise<PullRequest[]> {
   return await fetchFromGitHub(`pulls?state=${state}&per_page=${limit}`);
+}
+
+export async function fetchPullRequestDetails(prNumber: number): Promise<PullRequestDetails> {
+  return await fetchFromGitHub(`pulls/${prNumber}`);
+}
+
+export async function fetchPullRequestReviews(prNumber: number): Promise<Review[]> {
+  return await fetchFromGitHub(`pulls/${prNumber}/reviews`);
 }
 
 export async function fetchIssues(state = 'closed', labels = 'bug', per_page = 20): Promise<Issue[]> {

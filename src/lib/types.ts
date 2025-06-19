@@ -19,6 +19,9 @@ export interface Metrics {
   leadTime: { average: number };
   changeFailureRate: { rate: number };
   timeToRestore: { average: number };
+  averagePrSize: { average: number };
+  timeToFirstReview: { average: number };
+  codeChurn: { rate: number };
   okr: {
     baseline: number;
     target: number;
