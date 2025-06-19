@@ -1,33 +1,18 @@
 import { NextResponse } from 'next/server';
 import { fetchDeployments } from '@/lib/github';
+import { components } from '@octokit/openapi-types';
 
-interface DeploymentInfo {
-  id: number;
-  sha: string;
-  environment: string;
-  date: string;
-  creator: string;
-}
-
-interface RawDeployment {
-    id: number;
-    sha: string;
-    environment: string;
-    created_at: string;
-    creator: {
-        login: string;
-    };
-}
+type Deployment = components["schemas"]["deployment"];
 
 export async function GET() {
   try {
-    const rawDeployments: RawDeployment[] = await fetchDeployments(5); // Get last 5 deployments
-    const deployments: DeploymentInfo[] = rawDeployments.map((d) => ({
+    const rawDeployments: Deployment[] = await fetchDeployments(5); // Get last 5 deployments
+    const deployments = rawDeployments.map((d) => ({
       id: d.id,
       sha: d.sha.substring(0, 7),
       environment: d.environment,
       date: d.created_at,
-      creator: d.creator.login,
+      creator: d.creator?.login || 'unknown',
     }));
 
     return NextResponse.json({ deployments });

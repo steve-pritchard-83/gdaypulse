@@ -1,20 +1,20 @@
 import { NextResponse } from 'next/server';
 import { fetchIssues } from '@/lib/github';
+import { components } from '@octokit/openapi-types';
 
-interface GitHubIssue {
-  created_at: string;
-  closed_at: string | null;
-}
+type Issue = components["schemas"]["issue"];
 
 export async function GET() {
   try {
-    const issues: GitHubIssue[] = await fetchIssues('closed', 'bug', 20);
+    const issues: Issue[] = await fetchIssues('closed', 'bug', 20);
 
-    const restoreTimes = issues.map((issue) => {
-      const opened = new Date(issue.created_at).getTime();
-      const closed = new Date(issue.closed_at as string).getTime();
-      return (closed - opened) / 1000 / 60 / 60; // hours
-    });
+    const restoreTimes = issues
+      .filter((issue) => issue.closed_at)
+      .map((issue) => {
+        const opened = new Date(issue.created_at).getTime();
+        const closed = new Date(issue.closed_at as string).getTime();
+        return (closed - opened) / 1000 / 60 / 60; // hours
+      });
 
     const avg = restoreTimes.length
       ? (

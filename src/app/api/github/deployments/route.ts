@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { fetchDeployments } from '@/lib/github';
+import { components } from '@octokit/openapi-types';
 
-interface Deployment {
-  created_at: string;
-}
+type Deployment = components["schemas"]["deployment"];
 
 export async function GET() {
   try {
@@ -11,8 +10,10 @@ export async function GET() {
 
     // Group deployments by day
     const groups = deployments.reduce((acc: Record<string, number>, deployment) => {
-      const date = deployment.created_at.split('T')[0];
-      acc[date] = (acc[date] || 0) + 1;
+      if (deployment.created_at) {
+        const date = deployment.created_at.split('T')[0];
+        acc[date] = (acc[date] || 0) + 1;
+      }
       return acc;
     }, {});
 

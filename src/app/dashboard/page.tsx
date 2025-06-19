@@ -1,46 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import DeploymentsChart from '@/components/DeploymentsChart';
-import OKRGauge from '@/components/OKRGauge';
 import Logo from '@/components/Logo';
 import styles from './Dashboard.module.css';
 import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
 import OKRChart from '@/components/OKRChart';
 import SubmissionsChart from '@/components/SubmissionsChart';
-
-interface Commit {
-  sha: string;
-  message: string;
-  author: string;
-  date: string;
-}
-
-interface Deployment {
-  id: number;
-  sha: string;
-  environment: string;
-  date: string;
-  creator: string;
-}
-
-// Define a comprehensive type for all metrics
-interface Metrics {
-  deploymentFrequency: { chartData: { date: string; count: number }[] };
-  leadTime: { average: number };
-  changeFailureRate: { rate: number };
-  timeToRestore: { average: number };
-  okr: {
-    baseline: number;
-    target: number;
-    current: number;
-    progress: number;
-    chartData: { date: string; count: number }[];
-  };
-  commits: Commit[];
-  deployments: Deployment[];
-  weeklyCommitCount: number;
-}
+import { Metrics } from '@/lib/types';
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);

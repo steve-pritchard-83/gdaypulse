@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 import { fetchPullRequests } from '@/lib/github';
+import { components } from '@octokit/openapi-types';
 
-interface GitHubPullRequest {
-  merged_at: string | null;
-  created_at: string;
-}
+type PullRequest = components["schemas"]["pull-request"];
 
 export async function GET() {
   try {
-    const prs: GitHubPullRequest[] = await fetchPullRequests('closed', 20);
+    const prs: PullRequest[] = await fetchPullRequests('closed', 20);
 
     const leadTimes: number[] = prs
       .filter((pr) => pr.merged_at)

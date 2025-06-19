@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
 import { fetchCommits } from '@/lib/github';
+import { components } from '@octokit/openapi-types';
 
-interface Commit {
-  commit: {
-    author: {
-      date: string;
-    };
-  };
-}
+type Commit = components["schemas"]["commit"];
 
 export async function GET() {
   try {
@@ -17,7 +12,7 @@ export async function GET() {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const commitsThisWeek = commits.filter(
-      (c) => new Date(c.commit.author.date) > oneWeekAgo
+      (c) => c.commit.author && new Date(c.commit.author.date as string) > oneWeekAgo
     ).length;
     
     return NextResponse.json({ weeklyCommitCount: commitsThisWeek });
