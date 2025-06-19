@@ -129,6 +129,15 @@ export default function Dashboard() {
       </header>
 
       <div className={styles.mainGrid}>
+        <div className={styles.okrCard}>
+            <h2 className={styles.cardTitle}>Objective: Boost Enquiries 10% this Month</h2>
+            {okr && <OKRChart data={okr} />}
+        </div>
+
+        <div className={styles.okrGaugeCard}>
+             <SubmissionsChart data={okr.chartData} />
+        </div>
+
         <div className={styles.doraMetricsColumn}>
           <div className={styles.card}>
             <h2 className={styles.cardTitle}>Deployments This Week</h2>
@@ -166,15 +175,6 @@ export default function Dashboard() {
 
         <div className={`${styles.card} ${styles.doraChartCard}`}>
            <DeploymentsChart data={deploymentFrequency.chartData} />
-        </div>
-
-        <div className={styles.okrCard}>
-            <h2 className={styles.cardTitle}>Objective: Boost Enquiries 10% this Month</h2>
-            {okr && <OKRChart data={okr} />}
-        </div>
-
-        <div className={styles.okrGaugeCard}>
-             <SubmissionsChart data={okr.chartData} />
         </div>
 
         <div className={`${styles.card} ${styles.historyCard}`}>
