@@ -4,10 +4,27 @@ import DeploymentsChart from '@/components/DeploymentsChart';
 import OKRGauge from '@/components/OKRGauge';
 import Logo from '@/components/Logo';
 import styles from './Dashboard.module.css';
+import CommitHistory from '@/components/CommitHistory';
+import DeploymentHistory from '@/components/DeploymentHistory';
 
 interface Deployment {
   date: string;
   count: number;
+}
+
+interface Commit {
+    sha: string;
+    message: string;
+    author: string;
+    date: string;
+}
+
+interface DeploymentHistoryItem {
+    id: number;
+    sha: string;
+    environment: string;
+    date: string;
+    creator: string;
 }
 
 interface Metrics {
@@ -16,6 +33,8 @@ interface Metrics {
   changeFailureRatePercent: string;
   averageRestoreTimeHours: string;
   submissions: number;
+  commits: Commit[];
+  deployments: DeploymentHistoryItem[];
 }
 
 const DashboardPage = () => {
@@ -32,6 +51,8 @@ const DashboardPage = () => {
           fetch('/api/github/failure-rate'),
           fetch('/api/github/restore-time'),
           fetch('/api/contact-submissions'),
+          fetch('/api/github/commits'),
+          fetch('/api/github/deployment-history'),
         ]);
 
         const data = await Promise.all(res.map((r) => r.json()));
@@ -71,8 +92,8 @@ const DashboardPage = () => {
       {error && <p className={styles.error}>Error: {error}</p>}
 
       {metrics && (
-        <div className={styles.grid_container}>
-          <section className={`${styles.grid_container} ${styles.dora_metrics}`}>
+        <div className={styles.mainGrid}>
+          <section className={`${styles.card} ${styles.dora_metrics}`}>
             <div className={`${styles.card} ${styles.stat_card}`}>
               <p>Deployments This Week</p>
               <p>{metrics.deploymentFrequency.length}</p>
@@ -110,6 +131,13 @@ const DashboardPage = () => {
               />
             </div>
           </section>
+
+          <div className={styles.historyCard}>
+            <CommitHistory commits={metrics.commits} />
+          </div>
+          <div className={styles.historyCard}>
+            <DeploymentHistory deployments={metrics.deployments} />
+          </div>
         </div>
       )}
     </main>

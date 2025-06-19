@@ -125,6 +125,16 @@
   align-items: center;
 }
 
+.mainGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.historyCard {
+  grid-column: span 2;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .main {
@@ -148,5 +158,8 @@
   .header {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .mainGrid {
+    grid-template-columns: 1fr;
   }
 } 
