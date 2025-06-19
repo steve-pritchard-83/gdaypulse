@@ -1,18 +1,15 @@
-let submissionCount = 0;
-let baseline: number | null = null;
-
-export async function POST() {
-  submissionCount++;
-  if (baseline === null) baseline = submissionCount;
-  return new Response(JSON.stringify({ success: true }), { status: 200 });
-}
+import { NextResponse } from 'next/server';
+import { kv } from '@vercel/kv';
 
 export async function GET() {
-  const target: number | null = baseline ? Math.ceil(baseline * 1.1) : null;
-  const progress =
-    baseline && target ? (submissionCount / target) * 100 : 0;
-  return new Response(
-    JSON.stringify({ submissionCount, baseline, target, progress }),
-    { status: 200 }
-  );
+  const submissions = await kv.get<number>('submissions');
+  return NextResponse.json({ submissions: submissions ?? 0 });
+}
+
+export async function POST() {
+  const newCount = await kv.incr('submissions');
+  return NextResponse.json({
+    message: 'Submission recorded',
+    submissions: newCount,
+  });
 } 
