@@ -1,14 +1,25 @@
+import type { Metadata } from 'next';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 
-export const metadata = {
-  title: "G'dayPulse",
-  description: 'DORA + OKR Dashboard for futrcrew.com',
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+});
+
+export const metadata: Metadata = {
+  title: "G'dayPulse Dashboard",
+  description: 'DORA Metrics & OKR Dashboard',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={poppins.className}>{children}</body>
     </html>
   );
 }

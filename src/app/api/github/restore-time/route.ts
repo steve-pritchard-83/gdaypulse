@@ -23,7 +23,7 @@ export async function GET() {
         ).toFixed(1)
       : '0';
 
-    return NextResponse.json({ averageRestoreTimeHours: avg });
+    return NextResponse.json({ average: Number(avg) });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json({ message }, { status: 500 });

@@ -24,7 +24,7 @@ export async function GET() {
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    return NextResponse.json({ deploymentFrequency: dailyCounts });
+    return NextResponse.json({ chartData: dailyCounts });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json({ message }, { status: 500 });

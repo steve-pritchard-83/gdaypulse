@@ -30,7 +30,9 @@ export default function DeploymentHistory({ deployments }: Props) {
           <li key={deploy.id} className={styles.historyItem}>
             <div className={styles.itemHeader}>
               <span className={styles.sha}>{deploy.sha}</span>
-              <span className={styles.environment}>{deploy.environment}</span>
+              <span className={styles.environment} data-env={deploy.environment.toLowerCase()}>
+                {deploy.environment}
+              </span>
             </div>
             <p className={styles.message}>
               Deployed by <span className={styles.author}>{deploy.creator}</span>

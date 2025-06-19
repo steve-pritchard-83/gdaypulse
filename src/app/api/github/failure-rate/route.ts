@@ -20,9 +20,9 @@ export async function GET() {
     ).length;
 
     const total = prs.length;
-    const rate = total ? ((bugFixes / total) * 100).toFixed(1) : '0';
+    const rate = total ? (bugFixes / total) * 100 : 0;
 
-    return NextResponse.json({ changeFailureRatePercent: rate });
+    return NextResponse.json({ rate: rate });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json({ message }, { status: 500 });
