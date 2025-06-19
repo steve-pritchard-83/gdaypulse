@@ -57,11 +57,6 @@ const DashboardPage = () => {
     fetchMetrics();
   }, []);
 
-  const deploymentChartData = Array.from({ length: 7 }, (_, i) => ({
-    date: new Date(Date.now() - i * 86400000).toISOString().slice(0, 10),
-    count: Math.floor(Math.random() * 3),
-  })).reverse();
-
   return (
     <main className={styles.main}>
       <header className={styles.header}>
