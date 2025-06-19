@@ -28,7 +28,7 @@ const DashboardPage = () => {
       try {
         const res = await Promise.all([
           fetch('/api/github/deployments'),
-          fetch('/api/github/lead-time'),
+          fetch('/api/github/leadtime'),
           fetch('/api/github/failure-rate'),
           fetch('/api/github/restore-time'),
           fetch('/api/contact-submissions'),
