@@ -1,0 +1,31 @@
+.container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px; /* Explicit size for layout */
+  height: 150px;
+}
+
+.svg {
+  display: block;
+}
+
+.background {
+  fill: none;
+  stroke: #444444; /* A slightly lighter shade than the card background */
+}
+
+.progress {
+  fill: none;
+  stroke: var(--gday-yellow);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease-out;
+}
+
+.text {
+  position: absolute;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gday-white);
+} 

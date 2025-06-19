@@ -7,6 +7,7 @@ import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
 import OKRChart from '@/components/OKRChart';
 import SubmissionsChart from '@/components/SubmissionsChart';
+import CircularProgress from '@/components/CircularProgress';
 import { Metrics } from '@/lib/types';
 
 export default function Dashboard() {
@@ -131,7 +132,10 @@ export default function Dashboard() {
       <div className={styles.mainGrid}>
         <div className={styles.okrCard}>
             <h2 className={styles.cardTitle}>Objective: Boost Enquiries 10% this Month</h2>
-            {okr && <OKRChart data={okr} />}
+            <div className={styles.okrContainer}>
+                {okr && <OKRChart data={okr} />}
+                {okr && <CircularProgress progress={okr.progress} />}
+            </div>
         </div>
 
         <div className={styles.okrGaugeCard}>

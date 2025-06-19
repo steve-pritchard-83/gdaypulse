@@ -16,7 +16,7 @@ const SubmissionsChart = ({ data }: SubmissionsChartProps) => {
             color: '#a0a0a0',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
-        }}>Submissions Over Time</h2>
+        }}>Form Submissions Over Time</h2>
         <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#444" strokeOpacity={0.6} />
