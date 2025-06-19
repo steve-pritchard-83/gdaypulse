@@ -7,6 +7,21 @@ import styles from './Dashboard.module.css';
 import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
 
+interface Commit {
+  sha: string;
+  message: string;
+  author: string;
+  date: string;
+}
+
+interface Deployment {
+  id: number;
+  sha: string;
+  environment: string;
+  date: string;
+  creator: string;
+}
+
 // Define a comprehensive type for all metrics
 interface Metrics {
   deploymentFrequency: { chartData: { date: string; count: number }[] };
@@ -14,8 +29,8 @@ interface Metrics {
   changeFailureRate: { rate: number };
   timeToRestore: { average: number };
   okr: { baseline: number; target: number; current: number; progress: number };
-  commits: any[];
-  deployments: any[];
+  commits: Commit[];
+  deployments: Deployment[];
   weeklyCommitCount: number;
 }
 
