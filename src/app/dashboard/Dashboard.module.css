@@ -123,6 +123,15 @@
 
 .okrCard {
     grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.okrSubchart {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #444;
 }
 
 .okrGaugeCard {

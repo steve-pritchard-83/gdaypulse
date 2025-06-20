@@ -29,6 +29,13 @@ export interface Metrics {
     progress: number;
     chartData: { date: string; count: number }[];
   };
+  visitorOkr: {
+    baseline: number;
+    target: number;
+    current: number;
+    progress: number;
+    chartData: { date: string; count: number }[];
+  };
   commits: Commit[];
   deployments: Deployment[];
   weeklyCommitCount: number;

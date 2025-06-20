@@ -27,6 +27,7 @@ export default function Dashboard() {
           reviewTimeRes,
           churnRes,
           okrRes,
+          visitorOkrRes,
           commitsRes,
           deploymentHistoryRes,
           weeklyCommitsRes
@@ -39,12 +40,13 @@ export default function Dashboard() {
           fetch('/api/github/review-time'),
           fetch('/api/github/code-churn'),
           fetch('/api/contact-submissions'),
+          fetch('/api/google-analytics/visitors'),
           fetch('/api/github/commits'),
           fetch('/api/github/deployment-history'),
           fetch('/api/github/weekly-commits')
         ]);
 
-        if (!deploymentsRes.ok || !leadTimeRes.ok || !failureRateRes.ok || !restoreTimeRes.ok || !prSizeRes.ok || !reviewTimeRes.ok || !churnRes.ok || !okrRes.ok || !commitsRes.ok || !deploymentHistoryRes.ok || !weeklyCommitsRes.ok) {
+        if (!deploymentsRes.ok || !leadTimeRes.ok || !failureRateRes.ok || !restoreTimeRes.ok || !prSizeRes.ok || !reviewTimeRes.ok || !churnRes.ok || !okrRes.ok || !visitorOkrRes.ok || !commitsRes.ok || !deploymentHistoryRes.ok || !weeklyCommitsRes.ok) {
           throw new Error('Failed to fetch one or more metrics');
         }
 
@@ -56,6 +58,7 @@ export default function Dashboard() {
         const reviewTimeData = await reviewTimeRes.json();
         const churnData = await churnRes.json();
         const okrData = await okrRes.json();
+        const visitorOkrData = await visitorOkrRes.json();
         const commitsData = await commitsRes.json();
         const deploymentHistoryData = await deploymentHistoryRes.json();
         const weeklyCommitsData = await weeklyCommitsRes.json();
@@ -71,6 +74,7 @@ export default function Dashboard() {
           timeToFirstReview: reviewTimeData,
           codeChurn: churnData,
           okr: okrData.okr,
+          visitorOkr: visitorOkrData.okr,
           commits: commitsData.commits,
           deployments: deploymentHistoryData.deployments,
           weeklyCommitCount: weeklyCommitsData.weeklyCommitCount
@@ -114,7 +118,7 @@ export default function Dashboard() {
     return <div className={styles.error}>No metrics data available.</div>;
   }
 
-  const { deploymentFrequency, leadTime, changeFailureRate, timeToRestore, averagePrSize, timeToFirstReview, codeChurn, okr, commits, deployments, weeklyCommitCount } = metrics;
+  const { deploymentFrequency, leadTime, changeFailureRate, timeToRestore, averagePrSize, timeToFirstReview, codeChurn, okr, visitorOkr, commits, deployments, weeklyCommitCount } = metrics;
   const weeklyDeployments = deploymentFrequency.chartData.slice(-7).reduce((acc: number, d: { count: number; }) => acc + d.count, 0);
 
   return (
@@ -136,10 +140,18 @@ export default function Dashboard() {
                 {okr && <OKRChart data={okr} />}
                 {okr && <CircularProgress progress={okr.progress} />}
             </div>
+            <div className={styles.okrSubchart}>
+                {okr && <SubmissionsChart data={okr.chartData} />}
+            </div>
         </div>
-
-        <div className={styles.okrGaugeCard}>
-             <SubmissionsChart data={okr.chartData} />
+        
+        <div className={styles.okrCard}>
+            <h2 className={styles.cardTitle}>Objective: Increase Visitors 10% this Month</h2>
+            <div className={styles.okrContainer}>
+                {visitorOkr && <OKRChart data={visitorOkr} />}
+                {visitorOkr && <CircularProgress progress={visitorOkr.progress} />}
+            </div>
+            {/* Placeholder for a future visitor trend chart */}
         </div>
 
         <div className={styles.doraMetricsColumn}>
