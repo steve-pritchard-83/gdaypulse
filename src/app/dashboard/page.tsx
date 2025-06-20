@@ -140,9 +140,6 @@ export default function Dashboard() {
                 {okr && <OKRChart data={okr} />}
                 {okr && <CircularProgress progress={okr.progress} />}
             </div>
-            <div className={styles.okrSubchart}>
-                {okr && <SubmissionsChart data={okr.chartData} />}
-            </div>
         </div>
         
         <div className={styles.okrCard}>
