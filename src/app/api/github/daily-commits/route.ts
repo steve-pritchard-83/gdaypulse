@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { fetchCommits } from '@/lib/github';
 import { components } from '@octokit/openapi-types';
 
-type Commit = components["schemas"]["commit-activity"];
+type CommitDetail = components["schemas"]["commit"];
 
 export async function GET() {
   try {
@@ -13,7 +13,7 @@ export async function GET() {
 
     const commitsByDate: { [key: string]: number } = {};
 
-    allCommits.forEach((commit: any) => {
+    allCommits.forEach((commit: CommitDetail) => {
         const commitDate = commit.commit.author?.date;
         if (commitDate && new Date(commitDate) >= ninetyDaysAgo) {
             const date = new Date(commitDate).toISOString().split('T')[0];
@@ -30,8 +30,9 @@ export async function GET() {
     })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return NextResponse.json({ chartData });
-  } catch (error: any) {
-    console.error('Error fetching daily commits:', error.message);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    console.error('Error fetching daily commits:', errorMessage);
     return NextResponse.json({ message: 'Error fetching daily commits' }, { status: 500 });
   }
 } 

@@ -12,13 +12,19 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
+import { TooltipProps } from 'recharts';
 import styles from './TimeSeriesChart.module.css';
+
+interface DataPoint {
+  date: string;
+  [key: string]: any;
+}
 
 interface Series {
   name: string;
   dataKey: string;
   color: string;
-  data: any[];
+  data: DataPoint[];
 }
 
 interface TimeSeriesChartProps {
@@ -26,12 +32,12 @@ interface TimeSeriesChartProps {
   series: Series[];
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className={styles.customTooltip}>
           <p className={styles.tooltipLabel}>{label}</p>
-          {payload.map((pld: any) => (
+          {payload.map((pld) => (
             <div key={pld.dataKey} style={{ color: pld.color }}>
               <strong>{pld.name}:</strong> {pld.value}
             </div>
@@ -44,7 +50,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   };
 
 const TimeSeriesChart = ({ title, series }: TimeSeriesChartProps) => {
-  const mergedData = new Map();
+  const mergedData = new Map<string, DataPoint>();
 
   series.forEach((s) => {
     s.data.forEach((d) => {
@@ -52,7 +58,9 @@ const TimeSeriesChart = ({ title, series }: TimeSeriesChartProps) => {
         mergedData.set(d.date, { date: d.date });
       }
       const entry = mergedData.get(d.date);
-      entry[s.dataKey] = d.count;
+      if(entry) {
+        entry[s.dataKey] = d.count;
+      }
     });
   });
 
