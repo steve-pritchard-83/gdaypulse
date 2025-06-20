@@ -6,7 +6,6 @@ import styles from './Dashboard.module.css';
 import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
 import OKRChart from '@/components/OKRChart';
-import SubmissionsChart from '@/components/SubmissionsChart';
 import CircularProgress from '@/components/CircularProgress';
 import { Metrics } from '@/lib/types';
 
