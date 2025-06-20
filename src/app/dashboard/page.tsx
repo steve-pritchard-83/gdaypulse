@@ -1,12 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import DeploymentsChart from '@/components/DeploymentsChart';
 import Logo from '@/components/Logo';
 import styles from './Dashboard.module.css';
 import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
 import OKRChart from '@/components/OKRChart';
 import CircularProgress from '@/components/CircularProgress';
+import TimeSeriesChart from '@/components/TimeSeriesChart';
+import Heartbeat from '@/components/Heartbeat';
 import { Metrics } from '@/lib/types';
 
 export default function Dashboard() {
@@ -29,7 +30,8 @@ export default function Dashboard() {
           visitorOkrRes,
           commitsRes,
           deploymentHistoryRes,
-          weeklyCommitsRes
+          weeklyCommitsRes,
+          dailyCommitsRes
         ] = await Promise.all([
           fetch('/api/github/deployments'),
           fetch('/api/github/leadtime'),
@@ -42,10 +44,11 @@ export default function Dashboard() {
           fetch('/api/google-analytics/visitors'),
           fetch('/api/github/commits'),
           fetch('/api/github/deployment-history'),
-          fetch('/api/github/weekly-commits')
+          fetch('/api/github/weekly-commits'),
+          fetch('/api/github/daily-commits')
         ]);
 
-        if (!deploymentsRes.ok || !leadTimeRes.ok || !failureRateRes.ok || !restoreTimeRes.ok || !prSizeRes.ok || !reviewTimeRes.ok || !churnRes.ok || !okrRes.ok || !visitorOkrRes.ok || !commitsRes.ok || !deploymentHistoryRes.ok || !weeklyCommitsRes.ok) {
+        if (!deploymentsRes.ok || !leadTimeRes.ok || !failureRateRes.ok || !restoreTimeRes.ok || !prSizeRes.ok || !reviewTimeRes.ok || !churnRes.ok || !okrRes.ok || !visitorOkrRes.ok || !commitsRes.ok || !deploymentHistoryRes.ok || !weeklyCommitsRes.ok || !dailyCommitsRes.ok) {
           throw new Error('Failed to fetch one or more metrics');
         }
 
@@ -61,11 +64,13 @@ export default function Dashboard() {
         const commitsData = await commitsRes.json();
         const deploymentHistoryData = await deploymentHistoryRes.json();
         const weeklyCommitsData = await weeklyCommitsRes.json();
+        const dailyCommitsData = await dailyCommitsRes.json();
         
         const totalDeployments = deploymentsData.chartData.reduce((acc: number, d: {count: number}) => acc + d.count, 0);
 
         setMetrics({
           deploymentFrequency: { ...deploymentsData, total: totalDeployments },
+          dailyCommits: dailyCommitsData,
           leadTime: leadTimeData,
           changeFailureRate: failureRateData,
           timeToRestore: restoreTimeData,
@@ -99,7 +104,8 @@ export default function Dashboard() {
                 <div>
                     <Logo className={styles.logo}/>
                 </div>
-                <div>
+                <Heartbeat />
+                <div style={{ position: 'relative', zIndex: 1 }}>
                     <h1 className={styles.title}>G&apos;dayPulse</h1>
                     <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
                 </div>
@@ -117,7 +123,7 @@ export default function Dashboard() {
     return <div className={styles.error}>No metrics data available.</div>;
   }
 
-  const { deploymentFrequency, leadTime, changeFailureRate, timeToRestore, averagePrSize, timeToFirstReview, codeChurn, okr, visitorOkr, commits, deployments, weeklyCommitCount } = metrics;
+  const { deploymentFrequency, dailyCommits, leadTime, changeFailureRate, timeToRestore, averagePrSize, timeToFirstReview, codeChurn, okr, visitorOkr, commits, deployments, weeklyCommitCount } = metrics;
   const weeklyDeployments = deploymentFrequency.chartData.slice(-7).reduce((acc: number, d: { count: number; }) => acc + d.count, 0);
 
   return (
@@ -126,7 +132,8 @@ export default function Dashboard() {
         <div>
             <Logo className={styles.logo}/>
         </div>
-        <div>
+        <Heartbeat />
+        <div style={{ position: 'relative', zIndex: 1 }}>
             <h1 className={styles.title}>G&apos;dayPulse</h1>
             <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
         </div>
@@ -186,7 +193,23 @@ export default function Dashboard() {
         </div>
 
         <div className={`${styles.card} ${styles.doraChartCard}`}>
-           <DeploymentsChart data={deploymentFrequency.chartData} />
+           <TimeSeriesChart
+                title="Deployments vs. Commits Over Time"
+                series={[
+                {
+                    name: 'Deployments',
+                    dataKey: 'deployments',
+                    color: '#fcd34d',
+                    data: deploymentFrequency.chartData,
+                },
+                {
+                    name: 'Commits',
+                    dataKey: 'commits',
+                    color: '#f3f4f6',
+                    data: dailyCommits.chartData,
+                },
+                ]}
+            />
         </div>
 
         <div className={`${styles.card} ${styles.historyCard}`}>

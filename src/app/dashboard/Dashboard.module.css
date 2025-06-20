@@ -188,7 +188,6 @@
   .header {
     flex-direction: column;
     gap: 1.5rem;
-    position: static;
   }
   .header > div:first-child {
     position: static;

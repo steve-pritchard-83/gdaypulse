@@ -1,0 +1,78 @@
+/* TimeSeriesChart.module.css */
+.chartContainer {
+    background-color: var(--gday-charcoal);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--gday-white);
+  }
+  
+  .chartTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--gday-white);
+  }
+  
+  .customTooltip {
+    background-color: rgba(30, 30, 30, 0.9);
+    border: 1px solid #555;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    font-size: 0.95rem;
+  }
+  
+  .tooltipLabel {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--gday-light-gray);
+  }
+  
+  .chartContainer :global(.recharts-cartesian-grid-horizontal line),
+  .chartContainer :global(.recharts-cartesian-grid-vertical line) {
+    stroke: var(--gday-gray);
+    stroke-opacity: 0.3;
+  }
+  
+  .chartContainer :global(.recharts-cartesian-axis-tick-value) {
+    fill: var(--gday-light-gray);
+    font-size: 0.8rem;
+  }
+  
+  .chartContainer :global(.recharts-legend-item-text) {
+    color: var(--gday-light-gray) !important;
+  }
+
+  .chartContainer :global(.recharts-active-dot) {
+    stroke-width: 2;
+    r: 6;
+  }
+  
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 300px !important;
+  }
+  
+  .recharts-tooltip-wrapper {
+    background-color: var(--gday-charcoal) !important;
+    border: 1px solid #555 !important;
+    border-radius: 4px !important;
+  }
+  
+  .recharts-tooltip-label {
+    color: var(--gday-white) !important;
+    font-weight: bold !important;
+  }
+  
+  .recharts-legend-wrapper {
+    font-size: 0.9rem !important;
+  }
+  
+  .recharts-line .recharts-dot {
+    fill-opacity: 0;
+  }
+  
+  .recharts-line:hover .recharts-dot {
+    fill-opacity: 1;
+  } 

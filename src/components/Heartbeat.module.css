@@ -1,0 +1,38 @@
+.heartbeatContainer {
+    position: absolute;
+    width: 50%;
+    left: 25%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 0;
+    overflow: hidden;
+  }
+  
+  .heartbeatSvg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .heartbeatPath {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 4s linear infinite;
+  }
+  
+  @keyframes draw {
+    0% {
+      stroke-dashoffset: 100;
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    80% {
+      stroke-dashoffset: 0;
+      opacity: 0.6;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  } 

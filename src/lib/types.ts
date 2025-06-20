@@ -16,6 +16,7 @@ export interface Deployment {
 // Define a comprehensive type for all metrics
 export interface Metrics {
   deploymentFrequency: { chartData: { date: string; count: number }[], total: number };
+  dailyCommits: { chartData: { date: string; count: number }[] };
   leadTime: { average: number };
   changeFailureRate: { rate: number };
   timeToRestore: { average: number };
