@@ -9,15 +9,15 @@ async function getAveragePrSize(pullRequests: PullRequest[]): Promise<number> {
 
     let totalLinesChanged = 0;
     for (const pr of pullRequests) {
-        if (pr.number) {
-            const prDetails = await fetchPullRequestDetails(pr.number);
-            if (prDetails) {
-                totalLinesChanged += prDetails.additions + prDetails.deletions;
+      if (pr.number) {
+        const prDetails = await fetchPullRequestDetails(pr.number);
+        if (prDetails) {
+            totalLinesChanged += prDetails.additions + prDetails.deletions;
             }
         }
     }
     return totalLinesChanged / pullRequests.length;
-}
+        }
 
 export async function GET() {
   try {

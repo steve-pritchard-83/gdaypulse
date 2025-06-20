@@ -18,7 +18,7 @@ export async function GET() {
     const commitsThisWeek = commits.filter(
       (c) => c.commit.author && new Date(c.commit.author.date as string) > oneWeekAgo
     ).length;
-
+    
     const deploymentsThisWeek = deployments.filter(
         (d) => d.created_at && new Date(d.created_at) > oneWeekAgo
     ).length;
