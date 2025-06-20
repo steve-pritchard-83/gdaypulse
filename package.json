@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/generate-ownership.mjs && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -15,7 +15,8 @@
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^2.15.3"
+    "recharts": "^2.15.3",
+    "@headlessui/react": "^2.1.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
