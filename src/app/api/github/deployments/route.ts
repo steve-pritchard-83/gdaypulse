@@ -21,7 +21,7 @@ export async function GET() {
     const dailyCounts = Object.keys(groups)
       .map((date) => ({
         date,
-        count: groups[date],
+        deploymentCount: groups[date],
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 

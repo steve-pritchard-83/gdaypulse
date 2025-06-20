@@ -1,0 +1,24 @@
+.trend {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+}
+
+.up {
+    color: #22c55e; /* green-500 */
+}
+
+.down {
+    color: #ef4444; /* red-500 */
+}
+
+.neutral {
+    color: #6b7280; /* gray-500 */
+} 

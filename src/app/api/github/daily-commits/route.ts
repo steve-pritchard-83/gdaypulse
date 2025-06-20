@@ -26,7 +26,7 @@ export async function GET() {
 
     const chartData = Object.entries(commitsByDate).map(([date, count]) => ({
       date,
-      count,
+      commitCount: count,
     })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return NextResponse.json({ chartData });

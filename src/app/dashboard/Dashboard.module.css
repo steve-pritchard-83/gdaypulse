@@ -170,6 +170,10 @@
     grid-column: span 2;
 }
 
+.fullWidthCard {
+    grid-column: span 4;
+}
+
 @media (max-width: 1200px) {
     .doraMetricsColumn {
       grid-column: span 4;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
   XAxis,
@@ -12,10 +13,13 @@ import {
 } from 'recharts';
 import { TooltipProps } from 'recharts';
 import styles from './TimeSeriesChart.module.css';
+import Modal from './Modal/Modal';
+import DailyDetails from './DailyDetails';
 
 interface DataPoint {
   date: string;
-  count?: number;
+  commitCount?: number;
+  deploymentCount?: number;
   [key: string]: string | number | undefined;
 }
 
@@ -29,6 +33,11 @@ interface Series {
 interface TimeSeriesChartProps {
   title: string;
   series: Series[];
+}
+
+interface ModalInfo {
+    date: string;
+    type: 'commits' | 'deployments';
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -46,20 +55,21 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
     }
   
     return null;
-  };
+};
 
 const TimeSeriesChart = ({ title, series }: TimeSeriesChartProps) => {
-  const mergedData = new Map<string, DataPoint>();
+  const [modalInfo, setModalInfo] = useState<ModalInfo | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  series.forEach((s) => {
-    s.data.forEach((d) => {
-      if (!mergedData.has(d.date)) {
-        mergedData.set(d.date, { date: d.date });
-      }
-      const entry = mergedData.get(d.date);
-      if(entry) {
-        entry[s.dataKey] = d.count;
-      }
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const mergedData = new Map<string, DataPoint>();
+  series.forEach(s => {
+    s.data.forEach(d => {
+      const entry = mergedData.get(d.date) || { date: d.date };
+      mergedData.set(d.date, { ...entry, ...d });
     });
   });
 
@@ -67,39 +77,56 @@ const TimeSeriesChart = ({ title, series }: TimeSeriesChartProps) => {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
+  const handleChartClick = (e: any) => {
+    if (e && e.activePayload && e.activePayload.length > 0) {
+        const date = e.activeLabel;
+        const clickedKey = e.activePayload[0].dataKey;
+        const type = clickedKey === 'commitCount' ? 'commits' : 'deployments';
+        setModalInfo({ date, type });
+    }
+  };
+
   return (
-    <div className={styles.chartContainer} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <h3 className={styles.chartTitle}>{title}</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData}>
-            <defs>
-                {series.map((s) => (
-                    <linearGradient key={s.name} id={`color${s.dataKey}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={s.color} stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor={s.color} stopOpacity={0}/>
-                    </linearGradient>
-                ))}
-            </defs>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          {series.map((s) => (
-            <Area
-                key={s.name}
-                type="monotone"
-                dataKey={s.dataKey}
-                name={s.name}
-                stroke={s.color}
-                strokeWidth={2}
-                fillOpacity={1}
-                fill={`url(#color${s.dataKey})`}
-            />
-          ))}
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
+    <>
+        <div className={styles.chartContainer} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <h3 className={styles.chartTitle}>{title}</h3>
+        <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} onClick={handleChartClick} style={{ cursor: 'pointer' }}>
+                <defs>
+                    {series.map((s) => (
+                        <linearGradient key={s.name} id={`color${s.dataKey}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={s.color} stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor={s.color} stopOpacity={0}/>
+                        </linearGradient>
+                    ))}
+                </defs>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
+            {series.map((s) => (
+                <Area
+                    key={s.name}
+                    type="monotone"
+                    dataKey={s.dataKey}
+                    name={s.name}
+                    stroke={s.color}
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill={`url(#color${s.dataKey})`}
+                    activeDot={{ r: 6, strokeWidth: 2, fill: s.color, stroke: '#1a1a1a' }}
+                />
+            ))}
+            </AreaChart>
+        </ResponsiveContainer>
+        </div>
+        {hasMounted && modalInfo && (
+            <Modal isOpen={!!modalInfo} onClose={() => setModalInfo(null)}>
+                <DailyDetails date={modalInfo.date} type={modalInfo.type} />
+            </Modal>
+        )}
+    </>
   );
 };
 
