@@ -1,13 +1,14 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { writeFile, readdir } from 'fs/promises';
+import { writeFile, rm } from 'fs/promises';
 import path from 'path';
 
 const execAsync = promisify(exec);
+const REPO_URL = 'https://github.com/steve-pritchard-83/futrwebsite.git';
 
-async function getFileOwnership(filePath) {
+async function getFileOwnership(filePath, repoPath) {
     try {
-        const { stdout } = await execAsync(`git blame --line-porcelain "${filePath}"`);
+        const { stdout } = await execAsync(`git blame --line-porcelain "${filePath}"`, { cwd: repoPath });
         const lines = stdout.split('\n');
         const authorCounts = {};
 
@@ -26,47 +27,64 @@ async function getFileOwnership(filePath) {
 }
 
 async function main() {
-    console.log('Generating code ownership data...');
-    const { stdout: filesOutput } = await execAsync('git ls-files');
-    const files = filesOutput.split('\n').filter(Boolean);
+    console.log('Generating code ownership data from remote repository...');
+    
+    const tmpRepoPath = path.join(process.cwd(), 'tmp-ownership-repo');
 
-    const ownershipData = [];
+    try {
+        console.log(`Cloning repository: ${REPO_URL}`);
+        await rm(tmpRepoPath, { recursive: true, force: true });
+        await execAsync(`git clone --depth 1 ${REPO_URL} ${tmpRepoPath}`);
 
-    for (const file of files) {
-        if (!file) continue;
-        const authorCounts = await getFileOwnership(file);
-        for (const author in authorCounts) {
-            ownershipData.push({
-                name: file,
-                author: author,
-                lines: authorCounts[author],
-            });
+        console.log('Analyzing file ownership...');
+        const { stdout: filesOutput } = await execAsync('git ls-files', { cwd: tmpRepoPath });
+        const files = filesOutput.split('\n').filter(Boolean);
+
+        const ownershipData = [];
+
+        // This can be slow for large repositories, consider sampling or parallelizing
+        for (const file of files) {
+            if (!file) continue;
+            const authorCounts = await getFileOwnership(file, tmpRepoPath);
+            for (const author in authorCounts) {
+                ownershipData.push({
+                    name: file,
+                    author: author,
+                    lines: authorCounts[author],
+                });
+            }
         }
-    }
 
-    const authorFileData = {};
-    for (const item of ownershipData) {
-        if (!authorFileData[item.author]) {
-            authorFileData[item.author] = [];
+        const authorFileData = {};
+        for (const item of ownershipData) {
+            if (!authorFileData[item.author]) {
+                authorFileData[item.author] = [];
+            }
+            authorFileData[item.author].push({ name: item.name, lines: item.lines });
         }
-        authorFileData[item.author].push({ name: item.name, lines: item.lines });
-    }
 
-    const hierarchicalData = {
-        name: "Codebase",
-        children: Object.entries(authorFileData).map(([author, files]) => ({
-            name: author,
-            children: files.map(file => ({
-                name: file.name,
-                value: file.lines,
-                author: author
+        const hierarchicalData = {
+            name: "Codebase",
+            children: Object.entries(authorFileData).map(([author, files]) => ({
+                name: author,
+                children: files.map(file => ({
+                    name: file.name,
+                    value: file.lines,
+                    author: author
+                }))
             }))
-        }))
-    };
+        };
 
-    const outputPath = path.join(process.cwd(), 'public', 'ownership-data.json');
-    await writeFile(outputPath, JSON.stringify(hierarchicalData, null, 2));
-    console.log(`Code ownership data written to ${outputPath}`);
+        const outputPath = path.join(process.cwd(), 'public', 'ownership-data.json');
+        await writeFile(outputPath, JSON.stringify(hierarchicalData, null, 2));
+        console.log(`Code ownership data written to ${outputPath}`);
+    } catch(err) {
+        console.error('An error occurred during ownership generation:', err);
+        process.exit(1);
+    } finally {
+        console.log('Cleaning up temporary repository...');
+        await rm(tmpRepoPath, { recursive: true, force: true });
+    }
 }
 
 main().catch(err => {

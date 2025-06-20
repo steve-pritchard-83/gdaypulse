@@ -20,7 +20,7 @@ function calculateAverageLeadTime(pullRequests: PullRequest[]): number {
 export async function GET() {
   try {
     const allPullRequests: PullRequest[] = await fetchPullRequests('closed', 100);
-    
+
     const now = new Date();
     const thirtyDaysAgo = new Date(new Date().setDate(now.getDate() - 30));
     const sixtyDaysAgo = new Date(new Date().setDate(now.getDate() - 60));
@@ -34,7 +34,7 @@ export async function GET() {
 
     const averageLeadTimeRecent = calculateAverageLeadTime(recentPullRequests);
     const averageLeadTimePrevious = calculateAverageLeadTime(previousPullRequests);
-    
+
     const change = averageLeadTimePrevious > 0 
         ? ((averageLeadTimeRecent - averageLeadTimePrevious) / averageLeadTimePrevious) * 100 
         : averageLeadTimeRecent > 0 ? 100 : 0;
