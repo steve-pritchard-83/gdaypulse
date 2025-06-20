@@ -2,8 +2,6 @@
 
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -17,7 +15,8 @@ import styles from './TimeSeriesChart.module.css';
 
 interface DataPoint {
   date: string;
-  [key: string]: any;
+  count?: number;
+  [key: string]: string | number | undefined;
 }
 
 interface Series {
