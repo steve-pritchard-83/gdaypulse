@@ -185,6 +185,19 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 1.5rem;
+    position: static;
+  }
+  .header > div:first-child {
+    position: static;
+    height: 40px; /* Adjust height for mobile */
+    margin-bottom: 1rem;
+  }
+  .title {
+    font-size: 2rem;
+  }
   .mainGrid {
     grid-template-columns: 1fr;
   }
