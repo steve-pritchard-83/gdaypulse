@@ -77,8 +77,8 @@ const TimeSeriesChart = ({ title, series }: TimeSeriesChartProps) => {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  const handleChartClick = (e: any) => {
-    if (e && e.activePayload && e.activePayload.length > 0) {
+  const handleChartClick = (e: { activeLabel?: string; activePayload?: { dataKey: string }[] } | null) => {
+    if (e && e.activePayload && e.activePayload.length > 0 && e.activeLabel) {
         const date = e.activeLabel;
         const clickedKey = e.activePayload[0].dataKey;
         const type = clickedKey === 'commitCount' ? 'commits' : 'deployments';

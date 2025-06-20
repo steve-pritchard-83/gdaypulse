@@ -1,27 +1,59 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ResponsiveContainer, Treemap, Tooltip } from 'recharts';
+import { ResponsiveContainer, Treemap, Tooltip, TooltipProps } from 'recharts';
 import styles from './TimeSeriesChart.module.css'; // Reusing styles
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F', '#FFBB28'];
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface FileNode {
+    name: string;
+    value: number;
+    author: string;
+    color?: string;
+}
+
+interface AuthorNode {
+    name: string;
+    children: FileNode[];
+    color?: string;
+}
+
+interface ChartData {
+    name: string;
+    children: AuthorNode[];
+}
+
+const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload;
+      const data = payload[0].payload as FileNode | AuthorNode;
       return (
         <div className={styles.customTooltip}>
           <p>{data.name}</p>
-          {data.value && <p><strong>Lines:</strong> {data.value}</p>}
-          {data.author && <p><strong>Author:</strong> {data.author}</p>}
+          {'value' in data && <p><strong>Lines:</strong> {data.value}</p>}
+          {'author' in data && <p><strong>Author:</strong> {data.author}</p>}
         </div>
       );
     }
     return null;
 };
 
-const CustomizedContent = (props: any) => {
-    const { depth, x, y, width, height, name, author, color } = props;
+interface CustomizedContentProps {
+    depth?: number;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    name?: string;
+    color?: string;
+}
+
+const CustomizedContent = (props: CustomizedContentProps) => {
+    const { depth, x, y, width, height, name, color } = props;
+
+    if (depth === undefined || x === undefined || y === undefined || width === undefined || height === undefined || !name || !color) {
+        return null;
+    }
 
     return (
         <g>
@@ -53,7 +85,7 @@ const CustomizedContent = (props: any) => {
   
 
 export default function CodeOwnershipChart() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<ChartData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -64,19 +96,19 @@ export default function CodeOwnershipChart() {
                 if (!res.ok) {
                     throw new Error('Failed to fetch code ownership data');
                 }
-                const ownershipData = await res.json();
+                const ownershipData: ChartData = await res.json();
                 
                 // Assign colors to authors
                 const authorColorMap = new Map<string, string>();
                 let colorIndex = 0;
-                ownershipData.children.forEach((authorNode: any) => {
+                ownershipData.children.forEach((authorNode) => {
                     if (!authorColorMap.has(authorNode.name)) {
                         authorColorMap.set(authorNode.name, COLORS[colorIndex % COLORS.length]);
                         colorIndex++;
                     }
                     // Assign color to author and all their file nodes
                     authorNode.color = authorColorMap.get(authorNode.name);
-                    authorNode.children.forEach((fileNode: any) => {
+                    authorNode.children.forEach((fileNode) => {
                         fileNode.color = authorNode.color;
                     });
                 });
