@@ -1,0 +1,16 @@
+.progressRoot {
+  position: relative;
+  height: 0.5rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: hsl(210 40% 96.1%);
+}
+
+.progressIndicator {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  background-color: hsl(222.2 47.4% 11.2%);
+  transition: transform 0.3s ease;
+} 

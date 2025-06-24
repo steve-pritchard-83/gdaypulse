@@ -1,9 +1,9 @@
 .heartbeatContainer {
     position: absolute;
-    width: 50%;
-    left: 25%;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 33.33%;
+    height: 100%;
+    left: 33.33%;
+    top: 0;
     z-index: 0;
     overflow: hidden;
   }
