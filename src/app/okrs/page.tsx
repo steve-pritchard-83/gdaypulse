@@ -118,7 +118,7 @@ const calcPercent = (value: number, target: number, higherIsBetter: boolean) => 
 };
 
 
-const ProgressBar = ({ value, higherIsBetter }: { value: number, higherIsBetter: boolean }) => {
+const ProgressBar = ({ value }: { value: number }) => {
   const bgColor = value >= 100 ? okrStyles.progressComplete : okrStyles.progressInProgress;
   return (
     <div className={okrStyles.progressBarContainer}>
@@ -151,7 +151,7 @@ export default function OKRDashboard() {
                         {kr.value}{kr.unit} / {kr.target}{kr.unit}
                       </span>
                     </div>
-                    <ProgressBar value={pct} higherIsBetter={kr.higherIsBetter} />
+                    <ProgressBar value={pct} />
                   </div>
                 );
               })}
