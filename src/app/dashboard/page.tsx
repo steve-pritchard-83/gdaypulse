@@ -1,13 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Logo from '@/components/Logo';
 import styles from './Dashboard.module.css';
 import CommitHistory from '@/components/CommitHistory';
 import DeploymentHistory from '@/components/DeploymentHistory';
 import OKRChart from '@/components/OKRChart';
 import CircularProgress from '@/components/CircularProgress';
 import TimeSeriesChart from '@/components/TimeSeriesChart';
-import Heartbeat from '@/components/Heartbeat';
 import MetricCard from '@/components/MetricCard/MetricCard';
 import PullRequestList from '@/components/PullRequestList';
 import CodeOwnershipChart from '@/components/CodeOwnershipChart';
@@ -72,17 +70,6 @@ export default function Dashboard() {
 
   return (
     <div className={styles.dashboard}>
-      <header className={styles.header}>
-        <div>
-            <Logo className={styles.logo}/>
-        </div>
-        <Heartbeat />
-        <div style={{ position: 'relative', zIndex: 1 }}>
-            <h1 className={styles.title}>G&apos;dayPulse</h1>
-            <p className={styles.subtitle}>DORA & OKR Dashboard for futrcrew.com</p>
-        </div>
-      </header>
-
       <div className={styles.mainGrid}>
         <div className={styles.okrCard}>
             <h2 className={styles.cardTitle}>Objective: Boost Enquiries 10% this Month</h2>

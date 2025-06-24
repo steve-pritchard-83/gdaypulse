@@ -10,13 +10,14 @@
   },
   "dependencies": {
     "@google-analytics/data": "^5.1.0",
+    "@headlessui/react": "^2.1.2",
     "@octokit/openapi-types": "^25.1.0",
     "@vercel/kv": "^3.0.0",
+    "framer-motion": "^12.19.1",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^2.15.3",
-    "@headlessui/react": "^2.1.2"
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

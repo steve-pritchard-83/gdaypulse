@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
+import Header from '@/components/Header/Header';
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '700'],
 });
 
 export const metadata: Metadata = {
-  title: "G'dayPulse Dashboard",
-  description: 'DORA Metrics & OKR Dashboard',
+  title: "G-Day Pulse",
+  description: 'Executive dashboard for engineering and product metrics.',
 };
 
 export default function RootLayout({
@@ -19,7 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.className}>{children}</body>
+      <body className={inter.className}>
+        <Header />
+        <main>{children}</main>
+      </body>
     </html>
   );
 }
